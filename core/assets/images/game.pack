@@ -1,0 +1,33 @@
+
+images1.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+asteroid
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ship
+  rotate: false
+  xy: 260, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 326, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star16
+  rotate: false
+  xy: 326, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
