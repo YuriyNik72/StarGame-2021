@@ -1,7 +1,7 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.star.app.game.controllers.GameController;
+import com.star.app.controllers.GameController;
 import com.star.app.game.WorldRenderer;
 import com.star.app.screen.utils.Assets;
 

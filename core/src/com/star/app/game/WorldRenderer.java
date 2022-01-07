@@ -3,7 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.star.app.game.controllers.GameController;
+import com.star.app.controllers.GameController;
 import com.star.app.screen.utils.Assets;
 
 public class WorldRenderer {
@@ -25,10 +25,10 @@ public class WorldRenderer {
         gc.getBackground().render(batch);
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
+        gc.getParticleController().render(batch);
         gc.getHero().render(batch);
-        sb.setLength(0);
-        sb.append("SCORE: ").append(gc.getHero().getScoreView());
-        font32.draw(batch, sb, 20, 700);
+        gc.getHero().renderGUI(batch, font32);
+        gc.getFirstAidKitController().render(batch);
         batch.end();
     }
 }
