@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.star.app.game.controllers.GameController;
+import com.star.app.controllers.GameController;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
@@ -62,7 +62,8 @@ public class Asteroid implements Poolable {
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 128, position.y - 128, 128, 128,
-                256, 256, scale, scale, angle);
+                256, 256, scale, scale,
+                angle);
     }
 
     public boolean takeDamage(int amount) {
@@ -77,6 +78,7 @@ public class Asteroid implements Poolable {
                 gc.getAsteroidController().setup(position.x, position.y,
                         MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.25f);
             }
+
             return true;
         } else {
             return false;

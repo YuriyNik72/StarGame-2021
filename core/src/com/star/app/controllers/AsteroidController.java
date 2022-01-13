@@ -1,4 +1,4 @@
-package com.star.app.game.controllers;
+package com.star.app.controllers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.Asteroid;

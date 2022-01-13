@@ -4,6 +4,7 @@ package com.star.app;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.star.app.screen.GameScreen;
 
 public class StarGame extends Game {
@@ -22,6 +23,8 @@ public class StarGame extends Game {
         float dt = Gdx.graphics.getDeltaTime();
         getScreen().render(dt);
     }
+
+
 
     @Override
     public void dispose() {
