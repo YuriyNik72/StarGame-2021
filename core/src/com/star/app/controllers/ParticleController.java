@@ -18,6 +18,15 @@ public class ParticleController extends ObjectPool<Particle> {
                         1.2f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
             }
         }
+        public void takePowerUpEffect(float x, float y) {
+            for (int i = 0; i < 16; i++) {
+                float angle = 6.28f / 16.0f * i;
+                setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100,
+                        0.8f,3.0f, 2.5f,
+                        0,1,0,1,
+                        1,1,0,0.5f);
+            }
+        }
     }
 
     private TextureRegion oneParticle;
@@ -36,6 +45,8 @@ public class ParticleController extends ObjectPool<Particle> {
     protected Particle newObject() {
         return new Particle();
     }
+
+//двойная прорисовка спецэффектов
 
     public void render(SpriteBatch batch) {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);

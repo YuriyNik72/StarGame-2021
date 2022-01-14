@@ -26,6 +26,10 @@ public class Asteroid implements Poolable {
     private final float BASE_SIZE = 256;
     private final float BASE_RADIUS = BASE_SIZE / 2;
 
+    public float getScale() {
+        return scale;
+    }
+
     public int getHpMax() {
         return hpMax;
     }
@@ -78,7 +82,6 @@ public class Asteroid implements Poolable {
                 gc.getAsteroidController().setup(position.x, position.y,
                         MathUtils.random(-150, 150), MathUtils.random(-150, 150), scale - 0.25f);
             }
-
             return true;
         } else {
             return false;

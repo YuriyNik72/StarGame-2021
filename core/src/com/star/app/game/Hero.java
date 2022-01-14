@@ -28,7 +28,27 @@ public class Hero {
     private StringBuilder sb;
     private Circle hitArea;
     private Weapon currentWeapon;
+    private int money;
 
+    public int getScore() {
+        return score;
+    }
+
+    public int getHpMax() {
+        return hpMax;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public Weapon getCurrentWeapon() {
+        return currentWeapon;
+    }
 
     public float getAngle() {
         return angle;
@@ -50,6 +70,13 @@ public class Hero {
         score += amount;
     }
 
+    public boolean isAlive(){
+        return hp>0;
+    }
+    public void resumeGame(boolean active){
+        gc.setActive(active);
+    }
+
     public Hero(GameController gc) {
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
@@ -57,7 +84,7 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 500.0f;
-        this.hpMax = 100;
+        this.hpMax = 10;
         this.hp = hpMax;
         this.sb = new StringBuilder();
         this.hitArea = new Circle(position, 29);
@@ -74,6 +101,7 @@ public class Hero {
         sb.append("SCORE: ").append(scoreView).append("\n");
         sb.append("LIFE: ").append(hp).append(" / ").append(hpMax).append("\n");
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        sb.append("MONEY: ").append(money).append("\n");
         font.draw(batch, sb, 20, 700);
     }
 
@@ -86,17 +114,31 @@ public class Hero {
     public void takeDamage(int amount) {
         hp -= amount;
     }
-    public void plusDamage (int life){
-       this.hp = hp + life;
+
+    public void consume(PowerUp p) {
+        switch (p.getType()) {
+            case MEDKIT:
+                hp += p.getPower();
+                break;
+            case MONEY:
+                money += p.getPower();
+                break;
+            case AMMOS:
+                currentWeapon.addAmmos( p.getPower()) ;
+                break;
+        }
     }
 
     public void update(float dt) {
         fireTimer += dt;
         updateScore(dt);
 
+//клавиша управления огнем
+
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             tryToFire();
         }
+//клавиши управления кораблем
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             angle += 180.0f * dt;
@@ -104,6 +146,9 @@ public class Hero {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             angle -= 180.0f * dt;
         }
+
+//клавиша движения вперед
+
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
             velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
@@ -119,10 +164,12 @@ public class Hero {
             }
         }
 
+//клавиша движения назад
+
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             velocity.x += MathUtils.cosDeg(angle) * -enginePower / 2 * dt;
             velocity.y += MathUtils.sinDeg(angle) * -enginePower / 2 * dt;
-
+//левый двигатель
             float bx = position.x + MathUtils.cosDeg(angle + 90) * 20;
             float by = position.y + MathUtils.sinDeg(angle + 90) * 20;
             for (int i = 0; i < 2; i++) {
@@ -132,6 +179,7 @@ public class Hero {
                         1.0f, 0.5f, 0, 1,
                         1, 1, 1, 0);
             }
+//правый двигатель
             bx = position.x + MathUtils.cosDeg(angle - 90) * 20;
             by = position.y + MathUtils.sinDeg(angle - 90) * 20;
             for (int i = 0; i < 2; i++) {
@@ -141,7 +189,15 @@ public class Hero {
                         1.0f, 0.5f, 0, 1,
                         1, 1, 1, 0);
             }
+
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+            gc.setActive(true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.O)){
+                resumeGame(false);
+        }
+
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
 
@@ -154,6 +210,8 @@ public class Hero {
         checkSpaceBorders();
     }
 
+//очки за астероиды
+
     private void updateScore(float dt) {
         if (scoreView < score) {
             scoreView += 2000 * dt;
@@ -162,6 +220,8 @@ public class Hero {
             }
         }
     }
+
+//метод для стрельбы
 
     private void tryToFire() {
         if (fireTimer > currentWeapon.getFirePeriod()) {

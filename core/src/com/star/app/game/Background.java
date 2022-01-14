@@ -10,6 +10,7 @@ import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
 public class Background {
+
     private class Star {
         Vector2 position;
         Vector2 velocity;
@@ -67,4 +68,7 @@ public class Background {
             stars[i].update(dt);
         }
     }
+//    public void dispose() {
+//        textureCosmos.dispose();
+//    }
 }
