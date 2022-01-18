@@ -1,12 +1,16 @@
 package com.star.app.controllers;
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.game.*;
 import com.star.app.screen.ScreenManager;
 
 public class GameController {
+
     private Background background;
     private AsteroidController asteroidController;
     private BulletController bulletController;
@@ -15,6 +19,12 @@ public class GameController {
     private Hero hero;
     private Vector2 tempVec;
     private boolean active;
+    private Stage stage;
+    private int  a;
+
+    public Stage getStage() {
+        return stage;
+    }
 
     public void setActive(boolean active) {
         this.active = active;
@@ -44,7 +54,7 @@ public class GameController {
         return bulletController;
     }
 
-    public GameController() {
+    public GameController(SpriteBatch batch) {
         this.background = new Background(this);
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
@@ -52,6 +62,10 @@ public class GameController {
         this.particleController = new ParticleController();
         this.powerUpController = new PowerUpController(this);
         this.tempVec = new Vector2();
+        this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
+        stage.addActor(hero.getShop());
+
+        Gdx.input.setInputProcessor(stage);
 
         for (int i = 0; i < 3; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
@@ -62,7 +76,7 @@ public class GameController {
     }
 
     public void update(float dt) {
-//        пауза в игре
+//   пауза в игре
         if(active){
             return;
         }
@@ -76,6 +90,7 @@ public class GameController {
         if(!hero.isAlive()){
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER,hero);
         }
+        stage.act(dt);
     }
 
 //игровая логика
@@ -120,7 +135,7 @@ public class GameController {
                             0, 0, 1, 0);
 
                     b.deactivate();
-//очки герою за астероиды уничтоженные пудьками
+//очки герою за астероиды уничтоженные пульками
 
                     if (a.takeDamage(hero.getCurrentWeapon().getDamage())) {
                         hero.addScore(a.getHpMax() * 100);
@@ -140,14 +155,24 @@ public class GameController {
 
         for (int i = 0; i < powerUpController.getActiveList().size(); i++) {
             PowerUp p = powerUpController.getActiveList().get(i);
+
+//  магнит
+            a = hero.getMagnetField();
+            if ((p.getPosition()).cpy().sub(hero.getPosition()).len() <= a){
+                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tempVec, 100);
+            }
+
+
             if(hero.getHitArea().contains(p.getPosition())){
                 hero.consume(p);
-                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x,p.getPosition().y );
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x ,p.getPosition().y,p.getType());
+
                 p.deactivate();
             }
         }
     }
-//    public void dispose(){
-//        background.dispose();
-//    }
+    public void dispose(){
+        background.dispose();
+    }
 }
