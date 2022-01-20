@@ -30,5 +30,6 @@ public class WorldRenderer {
         gc.getHero().renderGUI(batch, font32);
         gc.getFirstAidKitController().render(batch);
         batch.end();
+        gc.getStage().draw();
     }
 }

@@ -1,16 +1,19 @@
 package com.star.app.game;
 
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.controllers.GameController;
 import com.star.app.game.helpers.Poolable;
 
+
 public class PowerUp implements Poolable {
+
+
     public enum Type {
-        MEDKIT(0), MONEY(1), AMMOS(2);
+        MEDKIT(0), MONEY(1), AMMOS(2), MAGNET(3);
 
         public int index;
-
         Type(int index) {
             this.index = index;
         }
@@ -39,6 +42,7 @@ public class PowerUp implements Poolable {
     public Vector2 getPosition() {
         return position;
     }
+
 
     @Override
     public boolean isActive() {

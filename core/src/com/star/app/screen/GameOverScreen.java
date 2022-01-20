@@ -29,14 +29,14 @@ public class GameOverScreen extends AbstractScreen {
 
     @Override
     public void show() {
+        this.background =new Background(null);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
         this.font48 = Assets.getInstance().getAssetManager().get("fonts/font48.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
-
     }
 
     public void update(float dt) {
-//        background.update(dt);
+        background.update(dt);
         if (Gdx.input.justTouched()){
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
         }
@@ -47,7 +47,7 @@ public class GameOverScreen extends AbstractScreen {
         update(delta);
         ScreenUtils.clear(0.0f, 0.0f, 0.0f, 1);
         batch.begin();
-//        background.render(batch);
+        background.render(batch);
         font72.draw(batch, "Game Over", 0, 600, 1280, Align.center, false);
         sb.setLength(0);
         sb.append("SCORE: ").append(losingHero.getScore()).append("\n");
@@ -59,8 +59,8 @@ public class GameOverScreen extends AbstractScreen {
         batch.end();
     }
 
-//    @Override
-//    public void dispose() {
-//        background.dispose();
-//    }
+    @Override
+    public void dispose() {
+        background.dispose();
+    }
 }
