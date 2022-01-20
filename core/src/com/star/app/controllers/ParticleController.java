@@ -5,17 +5,49 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.star.app.game.Particle;
+import com.star.app.game.PowerUp;
 import com.star.app.game.helpers.ObjectPool;
 import com.star.app.screen.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
     public class EffectBuilder {
-        public void buildMonsterSplash(float x, float y) {
-            for (int i = 0; i < 15; i++) {
-                float randomAngle = MathUtils.random(0, 6.28f);
-                float randomSpeed = MathUtils.random(0, 50.0f);
-                setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed,
-                        1.2f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
+//        public void buildMonsterSplash(float x, float y) {
+//            for (int i = 0; i < 15; i++) {
+//                float randomAngle = MathUtils.random(0, 6.28f);
+//                float randomSpeed = MathUtils.random(0, 50.0f);
+//                setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed,
+//                        1.2f, 2.0f, 1.8f, 1, 0, 0, 1, 1, 0, 0, 0.2f);
+//            }
+//        }
+        public void takePowerUpEffect(float x, float y, PowerUp.Type type) {
+            switch (type){
+                case MEDKIT:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100,
+                                0.8f,3.0f, 2.5f,
+                                1,0.5f,0,1,
+                                1,0,0.5f,0.5f);
+                    }
+                break;
+                case MONEY:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100,
+                                0.8f,3.0f, 2.5f,
+                                1,1,0,1,
+                                1,0.5f,0,0.5f);
+                    }
+                break;
+                case AMMOS:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100,
+                                0.8f,3.0f, 2.5f,
+                                1,0,1,1,
+                                0.5f,1,0,0.5f);
+                    }
+                break;
             }
         }
     }
@@ -37,6 +69,8 @@ public class ParticleController extends ObjectPool<Particle> {
         return new Particle();
     }
 
+//двойная прорисовка спецэффектов
+
     public void render(SpriteBatch batch) {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (int i = 0; i < activeList.size(); i++) {
@@ -49,6 +83,7 @@ public class ParticleController extends ObjectPool<Particle> {
                     8, 8, 16, 16, scale, scale, 0);
         }
         batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
         for (int i = 0; i < activeList.size(); i++) {
             Particle o = activeList.get(i);

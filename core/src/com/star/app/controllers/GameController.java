@@ -1,22 +1,37 @@
 package com.star.app.controllers;
 
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.game.*;
 import com.star.app.screen.ScreenManager;
 
 public class GameController {
+
     private Background background;
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
-    private FirstAidKitController firstAidKitController;
-    private FirstAidKit firstAidKit;
+    private PowerUpController powerUpController;
     private Hero hero;
     private Vector2 tempVec;
+    private boolean active;
+    private Stage stage;
+    private int  a;
 
-    public FirstAidKitController getFirstAidKitController() {
-        return firstAidKitController;
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public PowerUpController getFirstAidKitController() {
+        return powerUpController;
     }
 
     public ParticleController getParticleController() {
@@ -39,15 +54,18 @@ public class GameController {
         return bulletController;
     }
 
-    public GameController() {
+    public GameController(SpriteBatch batch) {
         this.background = new Background(this);
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
-        this.firstAidKitController = new FirstAidKitController(this);
-        this.firstAidKit = new FirstAidKit(this);
+        this.powerUpController = new PowerUpController(this);
         this.tempVec = new Vector2();
+        this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
+        stage.addActor(hero.getShop());
+
+        Gdx.input.setInputProcessor(stage);
 
         for (int i = 0; i < 3; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
@@ -58,25 +76,28 @@ public class GameController {
     }
 
     public void update(float dt) {
+//   пауза в игре
+        if(active){
+            return;
+        }
         background.update(dt);
         hero.update(dt);
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
-        firstAidKitController.update(dt);
-        firstAidKit.update(dt);
+        powerUpController.update(dt);
         checkCollisions();
-        checkCollisionsApt();
-    }
-    private void checkCollisionsApt(){
-
-        if (hero.getHitArea().overlaps(firstAidKit.getHitArea())){
-            hero.plusDamage(20);
-            firstAidKit.deactivate();
+        if(!hero.isAlive()){
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER,hero);
         }
+        stage.act(dt);
     }
+
+//игровая логика
 
     private void checkCollisions() {
+
+//уничтожение астероидов кораблем
 
         for (int i = 0; i < asteroidController.getActiveList().size(); i++) {
             Asteroid a = asteroidController.getActiveList().get(i);
@@ -86,15 +107,6 @@ public class GameController {
                 tempVec.set(hero.getPosition()).sub(a.getPosition()).nor();
                 hero.getPosition().mulAdd(tempVec, halfOverLen);
                 a.getPosition().mulAdd(tempVec, -halfOverLen);
-
-
-// аптечка
-                firstAidKitController.setup(a.getPosition().x +MathUtils.random(-4, 4) , a.getPosition().y +MathUtils.random(-4, 4) ,
-                         0.0f ,  0.0f ,10.0f, 5.5f, 5.5f,
-                        1.0f, 1.0f, 1.0f, 1, 1, 1, 1, 1);
-
-
-
 
 // импульс при столкновении корабля с астероидом
                 float sumScl = hero.getHitArea().radius + a.getHitArea().radius;
@@ -106,11 +118,9 @@ public class GameController {
                 }
                 hero.takeDamage(2);
             }
-
-
         }
 
-
+//уничтожение астероидов пульками
 
         for (int i = 0; i < bulletController.getActiveList().size(); i++) {
             Bullet b = bulletController.getActiveList().get(i);
@@ -125,13 +135,44 @@ public class GameController {
                             0, 0, 1, 0);
 
                     b.deactivate();
-                    if (a.takeDamage(1)) {
+//очки герою за астероиды уничтоженные пульками
+
+                    if (a.takeDamage(hero.getCurrentWeapon().getDamage())) {
                         hero.addScore(a.getHpMax() * 100);
+
+//появление бонусов герою при уничтожении астероида
+
+                        for (int k = 0; k < 3; k++) {
+                            powerUpController.setup(a.getPosition().x, a.getPosition().y,a.getScale() * 0.25f);
+                        }
                     }
                     break;
                 }
             }
         }
 
+//захват бонусов кораблем
+
+        for (int i = 0; i < powerUpController.getActiveList().size(); i++) {
+            PowerUp p = powerUpController.getActiveList().get(i);
+
+//  магнит
+            a = hero.getMagnetField();
+            if ((p.getPosition()).cpy().sub(hero.getPosition()).len() <= a){
+                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tempVec, 100);
+            }
+
+
+            if(hero.getHitArea().contains(p.getPosition())){
+                hero.consume(p);
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x ,p.getPosition().y,p.getType());
+
+                p.deactivate();
+            }
+        }
+    }
+    public void dispose(){
+        background.dispose();
     }
 }

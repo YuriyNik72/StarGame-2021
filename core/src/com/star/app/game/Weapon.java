@@ -35,6 +35,8 @@ public class Weapon {
         return curBullets;
     }
 
+//боеприпасы
+
     public Weapon(GameController gc, Hero hero, String title, float firePeriod, int damage,
                   float bulletSpeed, int maxBullets, Vector3[] slots) {
         this.gc = gc;
@@ -47,7 +49,7 @@ public class Weapon {
         this.slots = slots;
         this.curBullets = maxBullets;
     }
-
+//пульки
     public void fire() {
         if (curBullets > 0) {
             curBullets--;
@@ -59,6 +61,14 @@ public class Weapon {
                 vy = hero.getVelocity().y + bulletSpeed * MathUtils.sinDeg(hero.getAngle() + slots[i].z);
                 gc.getBulletController().setup(x, y, vx, vy);
             }
+        }
+    }
+
+//бонус патронов
+    public void addAmmos(int amount) {
+        curBullets += amount;
+        if (curBullets > maxBullets) {
+            curBullets = maxBullets;
         }
     }
 }
