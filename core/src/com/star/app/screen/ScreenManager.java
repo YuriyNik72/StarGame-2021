@@ -14,6 +14,7 @@ public class ScreenManager {
     }
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT/2;
 
     private StarGame game;
     private SpriteBatch batch;
@@ -31,7 +32,6 @@ public class ScreenManager {
     }
 
 //метод преобразования размера игрового поля при изменении размера экрана
-
     public Viewport getViewport() {
         return viewport;
     }
@@ -55,7 +55,6 @@ public class ScreenManager {
     }
 
 //метод выбора экрана
-
     public void changeScreen(ScreenType type, Object... args) {
         Screen screen = game.getScreen();
         Assets.getInstance().clear();
@@ -82,7 +81,6 @@ public class ScreenManager {
     }
 
 //метод установки целевого экрана
-
     public void goToTarget() {
         game.setScreen(targetScreen);
     }
