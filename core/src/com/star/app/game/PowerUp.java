@@ -11,7 +11,7 @@ public class PowerUp implements Poolable {
 
 
     public enum Type {
-        MEDKIT(0), MONEY(1), AMMOS(2), MAGNET(3);
+        MEDKIT(0), MONEY(1), AMMOS(2);
 
         public int index;
         Type(int index) {
